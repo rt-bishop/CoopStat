@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/frag_chart1d">
+
+    <fragment
+        android:id="@+id/frag_chart1d"
+        android:name="priv.rtbishop.coopstat.ui.ChartPagerFragment"
+        android:label="@string/menu_data1d"
+        tools:layout="@layout/fragment_chartpager">
+        <argument
+            android:name="days"
+            android:defaultValue="1"
+            app:argType="integer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/frag_chart30d"
+        android:name="priv.rtbishop.coopstat.ui.ChartPagerFragment"
+        android:label="@string/menu_data30d"
+        tools:layout="@layout/fragment_chartpager">
+        <argument
+            android:name="days"
+            android:defaultValue="30"
+            app:argType="integer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/frag_chart365d"
+        android:name="priv.rtbishop.coopstat.ui.ChartPagerFragment"
+        android:label="@string/menu_data365d"
+        tools:layout="@layout/fragment_chartpager">
+        <argument
+            android:name="days"
+            android:defaultValue="365"
+            app:argType="integer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/frag_stream"
+        android:name="priv.rtbishop.coopstat.ui.StreamFragment"
+        android:label="@string/menu_stream"
+        tools:layout="@layout/fragment_stream" />
+
+    <fragment
+        android:id="@+id/frag_settings"
+        android:name="priv.rtbishop.coopstat.ui.SettingsFragment"
+        android:label="@string/settings" />
+</navigation>
