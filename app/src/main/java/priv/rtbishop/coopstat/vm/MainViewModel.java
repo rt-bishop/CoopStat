@@ -1,13 +1,8 @@
 package priv.rtbishop.coopstat.vm;
 
-import android.app.Application;
-import android.content.SharedPreferences;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.preference.PreferenceManager;
+import androidx.lifecycle.ViewModel;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -28,16 +23,12 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import priv.rtbishop.coopstat.data.Data;
 
-public class MainViewModel extends AndroidViewModel {
+public class MainViewModel extends ViewModel {
 
     private OkHttpClient okHttpClient = new OkHttpClient();
     private MutableLiveData<Data> data;
     private String proxyUrl;
     private boolean isConnected = false;
-
-    public MainViewModel(@NonNull Application application) {
-        super(application);
-    }
 
     public LiveData<Data> getData() {
         if (data == null) {
@@ -90,13 +81,8 @@ public class MainViewModel extends AndroidViewModel {
         });
     }
 
-    public void obtainConnection() {
+    public void obtainConnection(String username, String password, final String devKey) {
         String urlLogin = "https://api.remot3.it/apv/v27/user/login";
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplication());
-        final String devKey = preferences.getString("devkey", "");
-        String username = preferences.getString("username", "");
-        String password = preferences.getString("password", "");
 
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         Map<String, String> jsonBody = new HashMap<>();

@@ -2,6 +2,9 @@
 <resources>
     <string name="app_name">Coop Stat</string>
     <string name="nav_header_title">Coop \nStatus</string>
+
+    <string name="action_connect">Connect to proxy</string>
+    <string name="settings">Settings</string>
     <string name="action_exit">Exit</string>
 
     <string name="current_humid">Humid: %s%%</string>
@@ -9,20 +12,27 @@
     <string name="fan_state">Fan: %s</string>
     <string name="heater_state">Heater: %s</string>
     <string name="light_state">Light: %s</string>
+
     <string name="state_on">On</string>
     <string name="state_off">Off</string>
+
     <string name="menu_data1d">1 day data charts</string>
     <string name="menu_data30d">30 days data charts</string>
     <string name="menu_data365d">365 days data charts</string>
     <string name="menu_stream">Live streaming</string>
-    <string name="stream_start">Start stream</string>
-    <string name="devkey">Developer key</string>
-    <string name="settings">Settings</string>
+
     <string name="username">Username</string>
     <string name="password">Password</string>
-    <string name="summary_username">Enter your remote.it username</string>
-    <string name="summary_password">Enter your remote.it password</string>
-    <string name="summary_devkey">Enter your remote.it developer key</string>
+    <string name="devkey">Developer key</string>
+
+    <string name="summary_username">Your remote.it username</string>
+    <string name="summary_password">Your remote.it password</string>
+    <string name="summary_devkey">Your remote.it developer key</string>
+
+    <string name="credentials">Enter your credentials in settings menu</string>
+    <string name="connection_not_found">Please, connect to proxy</string>
+    <string name="connection_established">Connection established</string>
+
     <string name="pager_arrow" translatable="false">pagerArrow</string>
     <string name="placeholder" translatable="false">placeHolder</string>
 </resources>

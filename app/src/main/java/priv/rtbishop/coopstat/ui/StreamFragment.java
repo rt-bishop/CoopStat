@@ -1,6 +1,7 @@
 package priv.rtbishop.coopstat.ui;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +9,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,8 +25,14 @@ public class StreamFragment extends Fragment {
 
     private MainViewModel mViewModel;
     private WebView mStreamView;
+    private Context mContext;
     private int mScale;
-    private ImageButton mBtnStartStream;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mContext = context;
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -37,7 +44,12 @@ public class StreamFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(MainViewModel.class);
         setupViews(view);
-        checkConnection();
+
+        if (mViewModel.isConnected()) {
+            loadUrl();
+        } else {
+            Toast.makeText(mContext, R.string.connection_not_found, Toast.LENGTH_LONG).show();
+        }
     }
 
     private void setupViews(@NonNull View view) {
@@ -52,23 +64,6 @@ public class StreamFragment extends Fragment {
                     mScale = (int) ((mStreamView.getWidth() / 1300f) * 100);
                 }
             });
-        }
-
-        mBtnStartStream = view.findViewById(R.id.btn_start_stream);
-        mBtnStartStream.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                checkConnection();
-            }
-        });
-    }
-
-    private void checkConnection() {
-        if (mViewModel.isConnected()) {
-            mBtnStartStream.setVisibility(View.INVISIBLE);
-            loadUrl();
-        } else {
-            mViewModel.obtainConnection();
         }
     }
 

@@ -2,6 +2,9 @@
 <resources>
     <string name="app_name">Coop Stat</string>
     <string name="nav_header_title">Статус \nмоих \nкурочек</string>
+
+    <string name="action_connect">Подключиться к прокси</string>
+    <string name="settings">Настройки</string>
     <string name="action_exit">Выход</string>
 
     <string name="current_humid">Влажн: %s%%</string>
@@ -9,18 +12,24 @@
     <string name="fan_state">Вентил: %s</string>
     <string name="heater_state">Обогрев: %s</string>
     <string name="light_state">Свет: %s</string>
+
     <string name="state_on">Вкл</string>
     <string name="state_off">Выкл</string>
+
     <string name="menu_data1d">Данные за 1 день</string>
     <string name="menu_data30d">Данные за 30 дней</string>
     <string name="menu_data365d">Данные за 365 дней</string>
     <string name="menu_stream">Прямая трансляция</string>
-    <string name="stream_start">Начать трансляцию</string>
-    <string name="devkey">Ключ разработчика</string>
-    <string name="settings">Настройки</string>
+
     <string name="username">Логин</string>
     <string name="password">Пароль</string>
+    <string name="devkey">Ключ разработчика</string>
+
     <string name="summary_username">Ваш логин для сайта remote.it</string>
     <string name="summary_password">Ваш пароль для сайта remote.it</string>
     <string name="summary_devkey">Ваш ключ разработчика для сайта remote.it</string>
+
+    <string name="credentials">Введите ваши реквизиты в меню настроек</string>
+    <string name="connection_not_found">Пожалуйста, подключитесь к прокси</string>
+    <string name="connection_established">Подключение установлено</string>
 </resources>
