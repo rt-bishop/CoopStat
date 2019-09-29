@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = findViewById(R.id.navigation_view);
         mNavController = Navigation.findNavController(this, R.id.frag_nav_host);
         mAppBarConfiguration = new AppBarConfiguration
-                .Builder(R.id.frag_chart1d, R.id.frag_chart30d, R.id.frag_chart365d, R.id.frag_stream)
+                .Builder(R.id.frag_chart1d, R.id.frag_chart7d, R.id.frag_chart365d, R.id.frag_stream)
                 .setDrawerLayout(drawerLayout)
                 .build();
         NavigationUI.setupActionBarWithNavController(this, mNavController, mAppBarConfiguration);

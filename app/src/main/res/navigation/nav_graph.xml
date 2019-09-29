@@ -17,13 +17,13 @@
     </fragment>
 
     <fragment
-        android:id="@+id/frag_chart30d"
+        android:id="@+id/frag_chart7d"
         android:name="priv.rtbishop.coopstat.ui.ChartPagerFragment"
         android:label="@string/menu_data30d"
         tools:layout="@layout/fragment_chartpager">
         <argument
             android:name="days"
-            android:defaultValue="30"
+            android:defaultValue="7"
             app:argType="integer" />
     </fragment>
 

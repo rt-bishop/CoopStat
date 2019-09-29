@@ -61,7 +61,7 @@ public class ChartFragment extends Fragment {
         switch (mDaysToShow) {
             case 1:
                 return "&days=" + mDaysToShow + "&average=10";
-            case 30:
+            case 7:
                 return "&days=" + mDaysToShow + "&timescale=240";
             default:
                 return "&days=" + mDaysToShow + "&average=1440";

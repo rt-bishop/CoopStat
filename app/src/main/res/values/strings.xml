@@ -17,7 +17,7 @@
     <string name="state_off">Off</string>
 
     <string name="menu_data1d">1 day data charts</string>
-    <string name="menu_data30d">30 days data charts</string>
+    <string name="menu_data30d">7 days data charts</string>
     <string name="menu_data365d">365 days data charts</string>
     <string name="menu_stream">Live streaming</string>
 
