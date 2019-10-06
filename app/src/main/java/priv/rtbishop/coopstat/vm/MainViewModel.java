@@ -1,8 +1,17 @@
 package priv.rtbishop.coopstat.vm;
 
+import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Looper;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
+import androidx.preference.PreferenceManager;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -21,14 +30,21 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import priv.rtbishop.coopstat.R;
 import priv.rtbishop.coopstat.data.Data;
 
-public class MainViewModel extends ViewModel {
+public class MainViewModel extends AndroidViewModel {
 
     private OkHttpClient okHttpClient = new OkHttpClient();
+    private Context mContext;
     private MutableLiveData<Data> data;
     private String proxyUrl;
     private boolean isConnected = false;
+
+    public MainViewModel(@NonNull Application application) {
+        super(application);
+        mContext = application;
+    }
 
     public LiveData<Data> getData() {
         if (data == null) {
@@ -81,7 +97,30 @@ public class MainViewModel extends ViewModel {
         });
     }
 
-    public void obtainConnection(String username, String password, final String devKey) {
+    public String getProxyUrl() {
+        return proxyUrl;
+    }
+
+    public boolean isConnected() {
+        return isConnected;
+    }
+
+    public void setupProxyConnection() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        String username = preferences.getString("username", "");
+        String password = preferences.getString("password", "");
+        String devKey = preferences.getString("devkey", "");
+
+        if (username.equals("") && password.equals("") && devKey.equals("")) {
+            Toast.makeText(mContext, R.string.credentials, Toast.LENGTH_LONG).show();
+        } else if (!isConnected()) {
+            obtainConnection(username, password, devKey);
+        } else {
+            Toast.makeText(mContext, R.string.connection_established, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void obtainConnection(String username, String password, final String devKey) {
         String urlLogin = "https://api.remot3.it/apv/v27/user/login";
 
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -152,6 +191,12 @@ public class MainViewModel extends ViewModel {
                         JSONObject jsonObject = jsonObjectMain.getJSONObject("connection");
                         proxyUrl = jsonObject.getString("proxy");
                         isConnected = jsonObjectMain.getString("status").equals("true");
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(mContext, R.string.connection_established, Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     } catch (JSONException | IOException e) {
                         e.printStackTrace();
                     }

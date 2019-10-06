@@ -1,13 +1,11 @@
 package priv.rtbishop.coopstat.ui;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,7 +19,6 @@ import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.preference.PreferenceManager;
 
 import com.google.android.material.navigation.NavigationView;
 
@@ -44,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
         mViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         setupNavigation();
         setupToolbarViews();
-        setupProxyConnection();
     }
 
     private void setupNavigation() {
@@ -112,21 +108,6 @@ public class MainActivity extends AppCompatActivity {
         }, 20000);
     }
 
-    private void setupProxyConnection() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String username = preferences.getString("username", "");
-        String password = preferences.getString("password", "");
-        String devKey = preferences.getString("devkey", "");
-
-        if (username.equals("") && password.equals("") && devKey.equals("")) {
-            Toast.makeText(this, R.string.credentials, Toast.LENGTH_SHORT).show();
-        } else if (!mViewModel.isConnected()) {
-            mViewModel.obtainConnection(username, password, devKey);
-        } else {
-            Toast.makeText(this, R.string.connection_established, Toast.LENGTH_LONG).show();
-        }
-    }
-
     @Override
     public boolean onSupportNavigateUp() {
         return NavigationUI.navigateUp(mNavController, mAppBarConfiguration)
@@ -143,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_connect:
-                setupProxyConnection();
+                mViewModel.setupProxyConnection();
                 break;
             case R.id.frag_settings:
                 NavigationUI.onNavDestinationSelected(item, mNavController);
