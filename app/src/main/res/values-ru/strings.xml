@@ -29,7 +29,7 @@
     <string name="summary_password">Ваш пароль для сайта remote.it</string>
     <string name="summary_devkey">Ваш ключ разработчика для сайта remote.it</string>
 
-    <string name="credentials">Введите ваши реквизиты в меню настроек</string>
+    <string name="credentials">Проверьте ваши реквизиты в меню настроек</string>
     <string name="connection_not_found">Пожалуйста, подключитесь к прокси</string>
     <string name="connection_established">Подключение установлено</string>
 </resources>

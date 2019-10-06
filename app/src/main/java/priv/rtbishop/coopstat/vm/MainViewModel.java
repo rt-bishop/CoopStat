@@ -80,7 +80,7 @@ public class MainViewModel extends AndroidViewModel {
         String password = preferences.getString("password", "");
         String devKey = preferences.getString("devkey", "");
 
-        if (username.equals("") && password.equals("") && devKey.equals("")) {
+        if (username.equals("") || password.equals("") || devKey.equals("")) {
             Toast.makeText(mContext, R.string.credentials, Toast.LENGTH_LONG).show();
         } else if (!isConnected()) {
             obtainConnection(username, password, devKey);

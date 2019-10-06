@@ -29,7 +29,7 @@
     <string name="summary_password">Your remote.it password</string>
     <string name="summary_devkey">Your remote.it developer key</string>
 
-    <string name="credentials">Enter your credentials in settings menu</string>
+    <string name="credentials">Check your credentials in settings menu</string>
     <string name="connection_not_found">Please, connect to proxy</string>
     <string name="connection_established">Connection established</string>
 
