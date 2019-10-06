@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 29
@@ -31,4 +33,6 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.0.1'
     implementation 'androidx.preference:preference:1.1.0'
     implementation 'com.squareup.okhttp3:okhttp:4.1.0'
+    implementation "androidx.core:core-ktx:1.1.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
