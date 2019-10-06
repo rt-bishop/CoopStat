@@ -17,7 +17,7 @@
     <string name="state_off">Выкл</string>
 
     <string name="menu_data1d">Данные за 1 день</string>
-    <string name="menu_data30d">Данные за 7 дней</string>
+    <string name="menu_data90d">Данные за 90 дней</string>
     <string name="menu_data365d">Данные за 365 дней</string>
     <string name="menu_stream">Прямая трансляция</string>
 

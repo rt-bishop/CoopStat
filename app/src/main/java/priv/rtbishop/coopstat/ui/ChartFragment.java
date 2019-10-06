@@ -58,14 +58,10 @@ public class ChartFragment extends Fragment {
     }
 
     private String getDays() {
-        switch (mDaysToShow) {
-            case 1:
-                return "&days=" + mDaysToShow + "&average=10";
-            case 7:
-                return "&days=" + mDaysToShow + "&timescale=240";
-            default:
-                return "&days=" + mDaysToShow + "&average=1440";
+        if (mDaysToShow == 1) {
+            return "&days=" + mDaysToShow + "&average=10";
         }
+        return "&days=" + mDaysToShow + "&average=1440";
     }
 
     private String getSize() {

@@ -8,9 +8,9 @@
         android:icon="@drawable/ic_calendar"
         android:title="@string/menu_data1d" />
     <item
-        android:id="@+id/frag_chart7d"
+        android:id="@+id/frag_chart90d"
         android:icon="@drawable/ic_calendar"
-        android:title="@string/menu_data30d" />
+        android:title="@string/menu_data90d" />
     <item
         android:id="@+id/frag_chart365d"
         android:icon="@drawable/ic_calendar"
