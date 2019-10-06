@@ -21,6 +21,9 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -44,6 +47,14 @@ public class MainViewModel extends AndroidViewModel {
     public MainViewModel(@NonNull Application application) {
         super(application);
         mContext = application;
+
+        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+        service.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                getNewData();
+            }
+        }, 2, 20, TimeUnit.SECONDS);
     }
 
     public LiveData<Data> getData() {
@@ -51,7 +62,6 @@ public class MainViewModel extends AndroidViewModel {
             data = new MutableLiveData<>();
             data.postValue(new Data("low", "low",
                     false, false, false));
-            obtainNewData();
         }
         return data;
     }
@@ -64,7 +74,22 @@ public class MainViewModel extends AndroidViewModel {
         return isConnected;
     }
 
-    public void obtainNewData() {
+    public void setupProxyConnection() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        String username = preferences.getString("username", "");
+        String password = preferences.getString("password", "");
+        String devKey = preferences.getString("devkey", "");
+
+        if (username.equals("") && password.equals("") && devKey.equals("")) {
+            Toast.makeText(mContext, R.string.credentials, Toast.LENGTH_LONG).show();
+        } else if (!isConnected()) {
+            obtainConnection(username, password, devKey);
+        } else {
+            Toast.makeText(mContext, R.string.connection_established, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void getNewData() {
         String urlData = "https://api.thingspeak.com/channels/839994/feeds.json?results=1";
         Request request = new Request.Builder()
                 .url(urlData)
@@ -95,29 +120,6 @@ public class MainViewModel extends AndroidViewModel {
                 }
             }
         });
-    }
-
-    public String getProxyUrl() {
-        return proxyUrl;
-    }
-
-    public boolean isConnected() {
-        return isConnected;
-    }
-
-    public void setupProxyConnection() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-        String username = preferences.getString("username", "");
-        String password = preferences.getString("password", "");
-        String devKey = preferences.getString("devkey", "");
-
-        if (username.equals("") && password.equals("") && devKey.equals("")) {
-            Toast.makeText(mContext, R.string.credentials, Toast.LENGTH_LONG).show();
-        } else if (!isConnected()) {
-            obtainConnection(username, password, devKey);
-        } else {
-            Toast.makeText(mContext, R.string.connection_established, Toast.LENGTH_LONG).show();
-        }
     }
 
     private void obtainConnection(String username, String password, final String devKey) {

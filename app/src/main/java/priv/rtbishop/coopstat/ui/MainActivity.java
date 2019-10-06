@@ -1,7 +1,6 @@
 package priv.rtbishop.coopstat.ui;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -97,15 +96,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mViewModel.obtainNewData();
-                handler.postDelayed(this, 20000);
-            }
-        }, 20000);
     }
 
     @Override
