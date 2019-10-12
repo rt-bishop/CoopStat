@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/frag_chart1d">
+    app:startDestination="@id/fr_chart1d">
 
     <fragment
-        android:id="@+id/frag_chart1d"
+        android:id="@+id/fr_chart1d"
         android:name="priv.rtbishop.coopstat.ui.ChartPagerFragment"
         android:label="@string/menu_data1d"
         tools:layout="@layout/fragment_chartpager">
@@ -17,7 +17,7 @@
     </fragment>
 
     <fragment
-        android:id="@+id/frag_chart90d"
+        android:id="@+id/fr_chart90d"
         android:name="priv.rtbishop.coopstat.ui.ChartPagerFragment"
         android:label="@string/menu_data90d"
         tools:layout="@layout/fragment_chartpager">
@@ -28,7 +28,7 @@
     </fragment>
 
     <fragment
-        android:id="@+id/frag_chart365d"
+        android:id="@+id/fr_chart365d"
         android:name="priv.rtbishop.coopstat.ui.ChartPagerFragment"
         android:label="@string/menu_data365d"
         tools:layout="@layout/fragment_chartpager">
@@ -39,13 +39,13 @@
     </fragment>
 
     <fragment
-        android:id="@+id/frag_stream"
+        android:id="@+id/fr_stream"
         android:name="priv.rtbishop.coopstat.ui.StreamFragment"
         android:label="@string/menu_stream"
         tools:layout="@layout/fragment_stream" />
 
     <fragment
-        android:id="@+id/frag_settings"
+        android:id="@+id/fr_settings"
         android:name="priv.rtbishop.coopstat.ui.SettingsFragment"
         android:label="@string/settings" />
 </navigation>

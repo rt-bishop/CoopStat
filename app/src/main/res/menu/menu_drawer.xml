@@ -4,19 +4,19 @@
     tools:showIn="navigation_view">
 
     <item
-        android:id="@+id/frag_chart1d"
+        android:id="@+id/fr_chart1d"
         android:icon="@drawable/ic_calendar"
         android:title="@string/menu_data1d" />
     <item
-        android:id="@+id/frag_chart90d"
+        android:id="@+id/fr_chart90d"
         android:icon="@drawable/ic_calendar"
         android:title="@string/menu_data90d" />
     <item
-        android:id="@+id/frag_chart365d"
+        android:id="@+id/fr_chart365d"
         android:icon="@drawable/ic_calendar"
         android:title="@string/menu_data365d" />
     <item
-        android:id="@+id/frag_stream"
+        android:id="@+id/fr_stream"
         android:icon="@drawable/ic_stream"
         android:title="@string/menu_stream" />
 

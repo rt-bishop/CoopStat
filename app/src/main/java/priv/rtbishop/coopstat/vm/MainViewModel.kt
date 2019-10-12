@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import okhttp3.*
@@ -22,9 +23,9 @@ import java.util.concurrent.TimeUnit
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val okHttpClient: OkHttpClient = OkHttpClient()
-
-    var data: MutableLiveData<Data> = MutableLiveData(Data("low", "low",
-            isFanOn = false, isHeaterOn = false, isLightOn = false))
+    private val _data: MutableLiveData<Data> = MutableLiveData(Data("low",
+            "low", isFanOn = false, isHeaterOn = false, isLightOn = false))
+    val data: LiveData<Data> = _data
     var proxyUrl: String? = null
     var isConnected = false
 
@@ -70,7 +71,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                         val isFanOn = jsonArray.getJSONObject(0).getString("field3") == "1"
                         val isHeaterOn = jsonArray.getJSONObject(0).getString("field4") == "1"
                         val isLightOn = jsonArray.getJSONObject(0).getString("field5") == "1"
-                        data.postValue(Data(currentHumid, currentTemp, isFanOn, isHeaterOn, isLightOn))
+                        _data.postValue(Data(currentHumid, currentTemp, isFanOn, isHeaterOn, isLightOn))
                     } catch (e: JSONException) {
                         e.printStackTrace()
                     } catch (e: IOException) {
@@ -152,7 +153,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                         val jsonObj = jsonObjectMain.getJSONObject("connection")
                         proxyUrl = jsonObj.getString("proxy")
                         isConnected = jsonObjectMain.getString("status") == "true"
-                        Handler(Looper.getMainLooper()).post { Toast.makeText(getApplication(), R.string.connection_established, Toast.LENGTH_SHORT).show() }
+                        Handler(Looper.getMainLooper()).post {
+                            Toast.makeText(getApplication(),
+                                    R.string.connection_established,
+                                    Toast.LENGTH_SHORT).show()
+                        }
                     } catch (e: JSONException) {
                         e.printStackTrace()
                     } catch (e: IOException) {

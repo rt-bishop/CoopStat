@@ -7,7 +7,7 @@
         android:title="@string/action_connect"
         app:showAsAction="never" />
     <item
-        android:id="@+id/frag_settings"
+        android:id="@+id/fr_settings"
         android:orderInCategory="1"
         android:title="@string/settings"
         app:showAsAction="never" />

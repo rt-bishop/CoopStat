@@ -31,11 +31,8 @@ class StreamFragment : Fragment() {
         viewModel = ViewModelProvider(activity!!).get(MainViewModel::class.java)
         setupViews(view)
 
-        if (viewModel.isConnected) {
-            loadUrl()
-        } else {
-            Toast.makeText(activity, R.string.connection_not_found, Toast.LENGTH_LONG).show()
-        }
+        if (viewModel.isConnected) loadUrl()
+        else Toast.makeText(activity, R.string.connection_not_found, Toast.LENGTH_LONG).show()
     }
 
     private fun setupViews(view: View) {

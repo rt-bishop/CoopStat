@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var fanState: TextView
     private lateinit var heaterState: TextView
     private lateinit var lightState: TextView
-    private lateinit var appBarConfiguration: AppBarConfiguration
+    private lateinit var appBarConfig: AppBarConfiguration
     private lateinit var navController: NavController
     private lateinit var viewModel: MainViewModel
     private lateinit var toolbar: Toolbar
@@ -46,14 +46,15 @@ class MainActivity : AppCompatActivity() {
         val drawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout)
         val navigationView = findViewById<NavigationView>(R.id.navigation_view)
         navController = Navigation.findNavController(this, R.id.frag_nav_host)
-        appBarConfiguration = AppBarConfiguration.Builder(R.id.frag_chart1d, R.id.frag_chart90d, R.id.frag_chart365d, R.id.frag_stream)
+        appBarConfig = AppBarConfiguration
+                .Builder(R.id.fr_chart1d, R.id.fr_chart90d, R.id.fr_chart365d, R.id.fr_stream)
                 .setDrawerLayout(drawerLayout)
                 .build()
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfig)
         NavigationUI.setupWithNavController(navigationView, navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.frag_stream) {
+            if (destination.id == R.id.fr_stream) {
                 toolbar.visibility = View.GONE
             } else {
                 toolbar.visibility = View.VISIBLE
@@ -90,7 +91,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        return NavigationUI.navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp()
+        return NavigationUI.navigateUp(navController, appBarConfig) || super.onSupportNavigateUp()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -101,7 +102,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_connect -> viewModel.setupProxyConnection()
-            R.id.frag_settings -> NavigationUI.onNavDestinationSelected(item, navController)
+            R.id.fr_settings -> NavigationUI.onNavDestinationSelected(item, navController)
             R.id.action_exit -> finish()
         }
         return super.onOptionsItemSelected(item)
