@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/gradient_navbar"
+    android:background="@drawable/launcher_background"
     android:gravity="bottom"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
@@ -11,9 +11,9 @@
         android:id="@+id/drawer_image"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="32dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="12dp"
         android:src="@drawable/img_hen"
         app:civ_border_color="#FFFFFFFF"
         app:civ_border_width="2dp"

@@ -34,7 +34,7 @@ class ChartFragment : Fragment() {
     private fun loadUrl() {
         val baseUrl = "https://thingspeak.com/channels/839994/charts/"
         var addUrl = (position + 1).toString() + "?" + getDays() + getSize()
-        val endUrl = "&bgcolor=%23ffffff&color=%23d62020&dynamic=true&round=1&type=line&xaxis=+&yaxis=+"
+        val endUrl = "&bgcolor=%23ffffff&color=%23000048&dynamic=true&round=1&type=line&xaxis=+&yaxis=+"
         addUrl += if (Locale.getDefault().displayLanguage == "русский") getTitleRus()
         else getTitleEng()
 

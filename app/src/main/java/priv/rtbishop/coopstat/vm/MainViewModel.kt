@@ -31,7 +31,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         val service = Executors.newSingleThreadScheduledExecutor()
-        service.scheduleAtFixedRate({ getNewData() }, 2, 20, TimeUnit.SECONDS)
+        service.scheduleAtFixedRate({ getNewData() }, 0, 30, TimeUnit.SECONDS)
     }
 
     fun setupProxyConnection() {
@@ -124,7 +124,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun obtainProxyUrl(devKey: String, devToken: String) {
         val urlConnect = "https://api.remot3.it/apv/v27/device/connect"
-        val deviceAddr = "80:00:00:00:01:01:24:9A"
+        val deviceAddr = "80:00:00:00:01:01:25:25"
 
         val jSON = "application/json; charset=utf-8".toMediaTypeOrNull()
         val jsonBody = HashMap<String, String>()
