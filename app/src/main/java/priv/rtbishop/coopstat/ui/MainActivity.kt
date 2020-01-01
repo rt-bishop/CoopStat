@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
         heaterState = findViewById(R.id.tv_heater_state)
         lightState = findViewById(R.id.tv_light_state)
 
-        viewModel.data.observe(this, Observer { data ->
+        viewModel.sensorReadings.observe(this, Observer { data ->
             currentHumid.text = String.format(resources.getString(R.string.current_humid), data.currentHumid)
             currentTemp.text = String.format(resources.getString(R.string.current_temp), data.currentTemp)
             if (data.isFanOn) {
@@ -101,7 +101,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_connect -> viewModel.setupProxyConnection()
             R.id.fr_settings -> NavigationUI.onNavDestinationSelected(item, navController)
             R.id.action_exit -> finish()
         }

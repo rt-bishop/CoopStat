@@ -1,20 +1,24 @@
 package priv.rtbishop.coopstat.vm
 
 import android.app.Application
-import android.os.Handler
-import android.os.Looper
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import androidx.preference.PreferenceManager
-import okhttp3.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONException
 import org.json.JSONObject
 import priv.rtbishop.coopstat.R
-import priv.rtbishop.coopstat.data.Data
+import priv.rtbishop.coopstat.data.SensorData
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.Executors
@@ -22,30 +26,34 @@ import java.util.concurrent.TimeUnit
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val okHttpClient: OkHttpClient = OkHttpClient()
-    private val _data: MutableLiveData<Data> = MutableLiveData(Data("low",
-            "low", isFanOn = false, isHeaterOn = false, isLightOn = false))
-    val data: LiveData<Data> = _data
-    var proxyUrl: String? = null
-    var isConnected = false
+    private val preferences = PreferenceManager.getDefaultSharedPreferences(application)
+    private val service = Executors.newSingleThreadScheduledExecutor()
+    private val okHttpClient = OkHttpClient()
+    private val _proxyUrl = MutableLiveData<String>()
+    private val _sensorReadings = MutableLiveData<SensorData>().apply {
+        postValue(SensorData("low", "low", isFanOn = false, isHeaterOn = false, isLightOn = false))
+    }
+
+    val proxyUrl: LiveData<String> = _proxyUrl
+    val sensorReadings: LiveData<SensorData> = _sensorReadings
 
     init {
-        val service = Executors.newSingleThreadScheduledExecutor()
-        service.scheduleAtFixedRate({ getNewData() }, 0, 30, TimeUnit.SECONDS)
+        service.scheduleAtFixedRate({ getNewData() }, 0, 20, TimeUnit.SECONDS)
     }
 
     fun setupProxyConnection() {
-        val preferences = PreferenceManager.getDefaultSharedPreferences(getApplication())
-        val username = preferences.getString("username", "")
-        val password = preferences.getString("password", "")
-        val devKey = preferences.getString("devkey", "")
+        val username = preferences.getString("username", "")!!
+        val password = preferences.getString("password", "")!!
+        val devKey = preferences.getString("devkey", "")!!
 
         if (username == "" || password == "" || devKey == "") {
             Toast.makeText(getApplication(), R.string.credentials, Toast.LENGTH_LONG).show()
-        } else if (!isConnected) {
-            obtainConnection(username!!, password!!, devKey!!)
         } else {
-            Toast.makeText(getApplication(), R.string.connection_established, Toast.LENGTH_LONG).show()
+            viewModelScope.launch {
+                val devToken = obtainDevToken(username, password, devKey)
+                val prxUrl = obtainProxyUrl(devKey, devToken)
+                _proxyUrl.postValue(prxUrl)
+            }
         }
     }
 
@@ -55,36 +63,34 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 .url(urlData)
                 .build()
 
-        okHttpClient.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                e.printStackTrace()
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                val responseBody = response.body
-                if (responseBody != null) {
-                    try {
-                        val jsonObject = JSONObject(responseBody.string())
-                        val jsonArray = jsonObject.getJSONArray("feeds")
-                        val currentHumid = jsonArray.getJSONObject(0).getString("field1")
-                        val currentTemp = jsonArray.getJSONObject(0).getString("field2")
-                        val isFanOn = jsonArray.getJSONObject(0).getString("field3") == "1"
-                        val isHeaterOn = jsonArray.getJSONObject(0).getString("field4") == "1"
-                        val isLightOn = jsonArray.getJSONObject(0).getString("field5") == "1"
-                        _data.postValue(Data(currentHumid, currentTemp, isFanOn, isHeaterOn, isLightOn))
-                    } catch (e: JSONException) {
-                        e.printStackTrace()
-                    } catch (e: IOException) {
-                        e.printStackTrace()
-                    }
-
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                try {
+                    val response = okHttpClient.newCall(request).execute()
+                    response.body?.let {
+                        val jsonObjectMain = JSONObject(it.string())
+                        try {
+                            val jsonArrayFeeds = jsonObjectMain.getJSONArray("feeds")
+                            val currentHumid = jsonArrayFeeds.getJSONObject(0).getString("field1")
+                            val currentTemp = jsonArrayFeeds.getJSONObject(0).getString("field2")
+                            val isFanOn = jsonArrayFeeds.getJSONObject(0).getString("field3") == "1"
+                            val isHeaterOn = jsonArrayFeeds.getJSONObject(0).getString("field4") == "1"
+                            val isLightOn = jsonArrayFeeds.getJSONObject(0).getString("field5") == "1"
+                            _sensorReadings.postValue(SensorData(currentHumid, currentTemp, isFanOn, isHeaterOn, isLightOn))
+                        } catch (e: JSONException) {
+                            Log.d("myTag", e.toString())
+                        }
+                    } ?: Log.d("myTag", "No response received")
+                } catch (e: IOException) {
+                    Log.d("myTag", "Check your internet connection")
                 }
             }
-        })
+        }
     }
 
-    private fun obtainConnection(username: String, password: String, devKey: String) {
+    private suspend fun obtainDevToken(username: String, password: String, devKey: String): String {
         val urlLogin = "https://api.remot3.it/apv/v27/user/login"
+        var devToken = String()
 
         val jSON = "application/json; charset=utf-8".toMediaTypeOrNull()
         val jsonBody = HashMap<String, String>()
@@ -99,32 +105,27 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 .post(requestBody)
                 .build()
 
-        okHttpClient.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                e.printStackTrace()
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                val responseBody = response.body
-                if (responseBody != null) {
+        withContext(Dispatchers.IO) {
+            try {
+                val response = okHttpClient.newCall(request).execute()
+                response.body?.let {
                     try {
-                        val jsonObj = JSONObject(responseBody.string())
-                        val devToken = jsonObj.getString("token")
-                        obtainProxyUrl(devKey, devToken)
+                        devToken = JSONObject(it.string()).getString("token")
                     } catch (e: JSONException) {
-                        e.printStackTrace()
-                    } catch (e: IOException) {
-                        e.printStackTrace()
+                        Log.d("myTag", e.toString())
                     }
-
-                }
+                } ?: Log.d("myTag", "No response received")
+            } catch (e: IOException) {
+                Log.d("myTag", e.toString())
             }
-        })
+        }
+        return devToken
     }
 
-    private fun obtainProxyUrl(devKey: String, devToken: String) {
+    private suspend fun obtainProxyUrl(devKey: String, devToken: String): String {
         val urlConnect = "https://api.remot3.it/apv/v27/device/connect"
         val deviceAddr = "80:00:00:00:01:01:25:25"
+        var proxyUrl = String()
 
         val jSON = "application/json; charset=utf-8".toMediaTypeOrNull()
         val jsonBody = HashMap<String, String>()
@@ -140,32 +141,22 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 .post(requestBody)
                 .build()
 
-        okHttpClient.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                e.printStackTrace()
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                val responseBody = response.body
-                if (responseBody != null) {
+        withContext(Dispatchers.IO) {
+            try {
+                val response = okHttpClient.newCall(request).execute()
+                response.body?.let {
                     try {
-                        val jsonObjectMain = JSONObject(responseBody.string())
-                        val jsonObj = jsonObjectMain.getJSONObject("connection")
-                        proxyUrl = jsonObj.getString("proxy")
-                        isConnected = jsonObjectMain.getString("status") == "true"
-                        Handler(Looper.getMainLooper()).post {
-                            Toast.makeText(getApplication(),
-                                    R.string.connection_established,
-                                    Toast.LENGTH_SHORT).show()
-                        }
+                        val mainObject = JSONObject(it.string())
+                        val connObject = mainObject.getJSONObject("connection")
+                        proxyUrl = connObject.getString("proxy")
                     } catch (e: JSONException) {
-                        e.printStackTrace()
-                    } catch (e: IOException) {
-                        e.printStackTrace()
+                        Log.d("myTag", e.toString())
                     }
-
-                }
+                } ?: Log.d("myTag", "No response received")
+            } catch (e: IOException) {
+                Log.d("myTag", e.toString())
             }
-        })
+        }
+        return proxyUrl
     }
 }
