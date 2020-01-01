@@ -1,7 +1,6 @@
 package priv.rtbishop.coopstat.vm
 
 import android.app.Application
-import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -28,13 +27,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val preferences = PreferenceManager.getDefaultSharedPreferences(application)
     private val service = Executors.newSingleThreadScheduledExecutor()
-    private val okHttpClient = OkHttpClient()
+    private val webClient = OkHttpClient()
     private val _proxyUrl = MutableLiveData<String>()
+    private val _debugMessage = MutableLiveData<String>()
     private val _sensorReadings = MutableLiveData<SensorData>().apply {
         postValue(SensorData("low", "low", isFanOn = false, isHeaterOn = false, isLightOn = false))
     }
+    private val app = application
 
     val proxyUrl: LiveData<String> = _proxyUrl
+    val debugMessage: LiveData<String> = _debugMessage
     val sensorReadings: LiveData<SensorData> = _sensorReadings
 
     init {
@@ -50,9 +52,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             Toast.makeText(getApplication(), R.string.credentials, Toast.LENGTH_LONG).show()
         } else {
             viewModelScope.launch {
-                val devToken = obtainDevToken(username, password, devKey)
-                val prxUrl = obtainProxyUrl(devKey, devToken)
-                _proxyUrl.postValue(prxUrl)
+                try {
+                    val token = obtainDevToken(username, password, devKey)
+                    val url = obtainProxyUrl(devKey, token)
+                    _proxyUrl.postValue(url)
+                } catch (e: IOException) {
+                    _debugMessage.postValue(app.resources.getString(R.string.no_internet))
+                    _proxyUrl.postValue("")
+                }
             }
         }
     }
@@ -66,10 +73,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 try {
-                    val response = okHttpClient.newCall(request).execute()
-                    response.body?.let {
-                        val jsonObjectMain = JSONObject(it.string())
+                    webClient.newCall(request).execute().body?.let {
                         try {
+                            val jsonObjectMain = JSONObject(it.string())
                             val jsonArrayFeeds = jsonObjectMain.getJSONArray("feeds")
                             val currentHumid = jsonArrayFeeds.getJSONObject(0).getString("field1")
                             val currentTemp = jsonArrayFeeds.getJSONObject(0).getString("field2")
@@ -78,11 +84,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                             val isLightOn = jsonArrayFeeds.getJSONObject(0).getString("field5") == "1"
                             _sensorReadings.postValue(SensorData(currentHumid, currentTemp, isFanOn, isHeaterOn, isLightOn))
                         } catch (e: JSONException) {
-                            Log.d("myTag", e.toString())
+                            _debugMessage.postValue(e.toString())
                         }
-                    } ?: Log.d("myTag", "No response received")
+                    } ?: _debugMessage.postValue(app.resources.getString(R.string.no_response))
                 } catch (e: IOException) {
-                    Log.d("myTag", "Check your internet connection")
+                    _debugMessage.postValue(app.resources.getString(R.string.no_internet))
                 }
             }
         }
@@ -106,18 +112,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 .build()
 
         withContext(Dispatchers.IO) {
-            try {
-                val response = okHttpClient.newCall(request).execute()
-                response.body?.let {
-                    try {
-                        devToken = JSONObject(it.string()).getString("token")
-                    } catch (e: JSONException) {
-                        Log.d("myTag", e.toString())
-                    }
-                } ?: Log.d("myTag", "No response received")
-            } catch (e: IOException) {
-                Log.d("myTag", e.toString())
-            }
+            webClient.newCall(request).execute().body?.let {
+                try {
+                    devToken = JSONObject(it.string()).getString("token")
+                } catch (e: JSONException) {
+                    _debugMessage.postValue(e.toString())
+                }
+            } ?: _debugMessage.postValue(app.resources.getString(R.string.no_response))
         }
         return devToken
     }
@@ -142,20 +143,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 .build()
 
         withContext(Dispatchers.IO) {
-            try {
-                val response = okHttpClient.newCall(request).execute()
-                response.body?.let {
-                    try {
-                        val mainObject = JSONObject(it.string())
-                        val connObject = mainObject.getJSONObject("connection")
-                        proxyUrl = connObject.getString("proxy")
-                    } catch (e: JSONException) {
-                        Log.d("myTag", e.toString())
-                    }
-                } ?: Log.d("myTag", "No response received")
-            } catch (e: IOException) {
-                Log.d("myTag", e.toString())
-            }
+            webClient.newCall(request).execute().body?.let {
+                try {
+                    val mainObject = JSONObject(it.string())
+                    val connObject = mainObject.getJSONObject("connection")
+                    proxyUrl = connObject.getString("proxy")
+                } catch (e: JSONException) {
+                    _debugMessage.postValue(e.toString())
+                }
+            } ?: _debugMessage.postValue(app.resources.getString(R.string.no_response))
         }
         return proxyUrl
     }

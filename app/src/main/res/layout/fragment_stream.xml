@@ -14,7 +14,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <WebView
-            android:id="@+id/web_view_stream"
+            android:id="@+id/stream_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"

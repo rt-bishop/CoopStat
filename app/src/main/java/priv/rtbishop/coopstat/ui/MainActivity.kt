@@ -5,6 +5,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
@@ -87,6 +88,10 @@ class MainActivity : AppCompatActivity() {
             } else {
                 lightState.text = String.format(resources.getString(R.string.light_state), resources.getString(R.string.state_off))
             }
+        })
+
+        viewModel.debugMessage.observe(this, Observer {
+            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
         })
     }
 
