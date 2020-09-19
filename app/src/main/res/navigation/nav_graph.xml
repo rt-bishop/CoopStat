@@ -44,8 +44,4 @@
         android:label="@string/menu_stream"
         tools:layout="@layout/fragment_stream" />
 
-    <fragment
-        android:id="@+id/fr_settings"
-        android:name="priv.rtbishop.coopstat.ui.SettingsFragment"
-        android:label="@string/settings" />
 </navigation>

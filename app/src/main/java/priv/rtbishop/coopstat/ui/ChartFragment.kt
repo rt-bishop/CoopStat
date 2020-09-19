@@ -2,30 +2,24 @@ package priv.rtbishop.coopstat.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.webkit.WebView
 import androidx.fragment.app.Fragment
 import priv.rtbishop.coopstat.R
 import java.util.*
 
-class ChartFragment : Fragment() {
+class ChartFragment : Fragment(R.layout.fragment_chart) {
 
     private lateinit var webView: WebView
     private var daysToShow: Int = 0
     private var position: Int = 0
 
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_chart, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val bundle = arguments
-        position = bundle!!.getInt("position")
-        daysToShow = bundle.getInt("daysToShow")
+        arguments?.let {
+            position = it.getInt("position")
+            daysToShow = it.getInt("daysToShow")
+        }
         webView = view.findViewById(R.id.web_view_chart)
         loadUrl()
     }

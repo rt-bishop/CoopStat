@@ -3,9 +3,6 @@
     <string name="app_name">Coop Stat</string>
     <string name="nav_header_title">Статус \nмоих \nкурочек</string>
 
-    <string name="settings">Настройки</string>
-    <string name="action_exit">Выход</string>
-
     <string name="current_humid">Влажн: %s%%</string>
     <string name="current_temp">Темп: %s\u2103</string>
     <string name="fan_state">Вентил: %s</string>
@@ -22,14 +19,4 @@
 
     <string name="no_internet">Пожалуйста, проверьте подключение к Интернету</string>
     <string name="no_response">Нет ответа от сервера данных</string>
-
-    <string name="username">Логин</string>
-    <string name="password">Пароль</string>
-    <string name="devkey">Ключ разработчика</string>
-
-    <string name="summary_username">Ваш логин для сайта remote.it</string>
-    <string name="summary_password">Ваш пароль для сайта remote.it</string>
-    <string name="summary_devkey">Ваш ключ разработчика для сайта remote.it</string>
-
-    <string name="credentials">Проверьте ваши реквизиты в меню настроек</string>
 </resources>

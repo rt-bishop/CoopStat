@@ -1,23 +1,18 @@
 package priv.rtbishop.coopstat.ui
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
-
 import com.google.android.material.navigation.NavigationView
-
 import priv.rtbishop.coopstat.R
 import priv.rtbishop.coopstat.vm.MainViewModel
 
@@ -70,7 +65,7 @@ class MainActivity : AppCompatActivity() {
         heaterState = findViewById(R.id.tv_heater_state)
         lightState = findViewById(R.id.tv_light_state)
 
-        viewModel.sensorReadings.observe(this, Observer { data ->
+        viewModel.sensorReadings.observe(this, { data ->
             currentHumid.text = String.format(resources.getString(R.string.current_humid), data.currentHumid)
             currentTemp.text = String.format(resources.getString(R.string.current_temp), data.currentTemp)
             if (data.isFanOn) {
@@ -90,25 +85,12 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        viewModel.debugMessage.observe(this, Observer {
+        viewModel.debugMessage.observe(this, {
             Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
         })
     }
 
     override fun onSupportNavigateUp(): Boolean {
         return NavigationUI.navigateUp(navController, appBarConfig) || super.onSupportNavigateUp()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.fr_settings -> NavigationUI.onNavDestinationSelected(item, navController)
-            R.id.action_exit -> finish()
-        }
-        return super.onOptionsItemSelected(item)
     }
 }

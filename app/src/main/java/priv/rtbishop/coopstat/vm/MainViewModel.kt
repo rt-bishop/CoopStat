@@ -1,13 +1,12 @@
 package priv.rtbishop.coopstat.vm
 
 import android.app.Application
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import androidx.preference.PreferenceManager
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -16,17 +15,14 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONException
 import org.json.JSONObject
+import priv.rtbishop.coopstat.BuildConfig
 import priv.rtbishop.coopstat.R
 import priv.rtbishop.coopstat.data.SensorData
 import java.io.IOException
 import java.util.*
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val preferences = PreferenceManager.getDefaultSharedPreferences(application)
-    private val service = Executors.newSingleThreadScheduledExecutor()
     private val webClient = OkHttpClient()
     private val _proxyUrl = MutableLiveData<String>()
     private val _debugMessage = MutableLiveData<String>()
@@ -40,26 +36,27 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val sensorReadings: LiveData<SensorData> = _sensorReadings
 
     init {
-        service.scheduleAtFixedRate({ getNewData() }, 0, 20, TimeUnit.SECONDS)
+        viewModelScope.launch {
+            while (true) {
+                getNewData()
+                delay(20000)
+            }
+        }
     }
 
     fun setupProxyConnection() {
-        val username = preferences.getString("username", "")!!
-        val password = preferences.getString("password", "")!!
-        val devKey = preferences.getString("devkey", "")!!
+        val username = BuildConfig.USER_NAME
+        val password = BuildConfig.PASS_WORD
+        val devKey = BuildConfig.DEV_KEY
 
-        if (username == "" || password == "" || devKey == "") {
-            Toast.makeText(getApplication(), R.string.credentials, Toast.LENGTH_LONG).show()
-        } else {
-            viewModelScope.launch {
-                try {
-                    val token = obtainDevToken(username, password, devKey)
-                    val url = obtainProxyUrl(devKey, token)
-                    _proxyUrl.postValue(url)
-                } catch (e: IOException) {
-                    _debugMessage.postValue(app.resources.getString(R.string.no_internet))
-                    _proxyUrl.postValue("")
-                }
+        viewModelScope.launch {
+            try {
+                val token = obtainDevToken(username, password, devKey)
+                val url = obtainProxyUrl(devKey, token)
+                _proxyUrl.postValue(url)
+            } catch (e: IOException) {
+                _debugMessage.postValue(app.resources.getString(R.string.no_internet))
+                _proxyUrl.postValue("")
             }
         }
     }
