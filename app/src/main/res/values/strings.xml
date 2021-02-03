@@ -1,24 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Coop Stat</string>
-    <string name="nav_header_title">Coop \nStatus</string>
-
-    <string name="current_humid">Humid: %s%%</string>
-    <string name="current_temp">Temp: %s\u2103</string>
-    <string name="fan_state">Fan: %s</string>
-    <string name="heater_state">Heater: %s</string>
-    <string name="light_state">Light: %s</string>
-
-    <string name="state_on">On</string>
-    <string name="state_off">Off</string>
-
-    <string name="menu_data1d">1 day data charts</string>
-    <string name="menu_data90d">90 days data charts</string>
-    <string name="menu_data365d">365 days data charts</string>
-    <string name="menu_stream">Live streaming</string>
-
-    <string name="no_internet">Please, check your internet connection</string>
-    <string name="no_response">No valid response from the server</string>
-
-    <string name="placeholder" translatable="false">placeHolder</string>
 </resources>

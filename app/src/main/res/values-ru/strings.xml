@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Coop Stat</string>
-    <string name="nav_header_title">Статус \nмоих \nкурочек</string>
-
-    <string name="current_humid">Влажн: %s%%</string>
-    <string name="current_temp">Темп: %s\u2103</string>
-    <string name="fan_state">Вентил: %s</string>
-    <string name="heater_state">Обогрев: %s</string>
-    <string name="light_state">Свет: %s</string>
-
-    <string name="state_on">Вкл</string>
-    <string name="state_off">Выкл</string>
-
-    <string name="menu_data1d">Данные за 1 день</string>
-    <string name="menu_data90d">Данные за 90 дней</string>
-    <string name="menu_data365d">Данные за 365 дней</string>
-    <string name="menu_stream">Прямая трансляция</string>
-
-    <string name="no_internet">Пожалуйста, проверьте подключение к Интернету</string>
-    <string name="no_response">Нет ответа от сервера данных</string>
 </resources>
